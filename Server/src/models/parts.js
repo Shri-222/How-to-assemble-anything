@@ -1,7 +1,7 @@
 
 import mongoose from "mongoose";
 
-const partsSchemas = mongoose.Schema({
+const partsSchemas = new mongoose.Schema({
 
     name : {
         type : String,

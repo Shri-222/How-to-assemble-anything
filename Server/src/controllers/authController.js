@@ -1,4 +1,7 @@
+
+import OTP from "../models/otp";
 import User from "../models/User"
+
 
 // registration controller
 export default async function Registration(req, res) {
@@ -21,15 +24,27 @@ export default async function Registration(req, res) {
         )
     }
 
+    const hashPassword = await bcrypt.hash(password, 10)
+
     try {
         let isUserPresent = await User.findOne({email: email})
 
         if ( !isUserPresent ) {
 
+            const { otp } = req.body;
+
+            const isOTPExits = await OTP.findOne({email}).sort({createdAt : -1}).limit(1).exec();
+
+            if( !isOTPExits ) {
+                return res.status(400).json({massage: 'OTP Not Found'});
+            } else if ( isOTPExits.otp !== otp ) {
+                return res.status(400).json({massage: 'Invalid OTP'}); 
+            }
+
             isUserPresent = new User({
                 userName : userName,
                 email : email,
-                password : password,
+                password : hashPassword,
                 // refresh_token : 
             })
 
@@ -75,11 +90,49 @@ export default async function Login( { req, res} ) {
         )
     };
 
-    const isUserPresent = await User.findOne( { email : email } )
+    const isUserPresent = await User.findOne( { email } ).select('+password')
 
-    if ( !isUserPresent ) return res.status(400).json({massage: 'User Is NOt Registered, Please Registered First '});
+    if ( !isUserPresent ) return res.status(400).json({massage: 'Invalid Email or Password'});
 
-    if ( isUserPresent.password !== password ) return res.status(400).json({ massage : ' Incorrect Password '})
+    if (  await bcrypt.compare(password, isUserPresent.password) ) {
+
+        const payload = {
+            email : isUserPresent.email,
+            Id : isUserPresent.id,
+        };
+
+        const JWTToken = jwt.sign(payload, process.env.JWT_SECRET, {
+            expiresIn : '24h',
+        })
+
+        isUserPresent.Token = JWTToken;
+        isUserPresent.password = undefined;
+
+        const CookiesOptions = {
+            httpOnly : true,
+            secure : true,
+            sameSite : 'none',
+            path : '/',
+            maxAge : 7 * 24 * 60 * 60 * 1000    // 7 Days Validation 
+        };
+
+        res.cookie( 
+            'Session',
+            JWTToken,
+            CookiesOptions
+        ).status(200).json({
+            massage : 'User Logged In Successfully ',
+            data : isUserPresent
+        })
+        
+    } else {
+                res.status(401).json(
+                    {
+                        success : false,
+                        massege : 'Password is Incorrect, Please Enter Password Correctly',
+                    }
+                )
+            }
 
     return res.status(200).json(
         {

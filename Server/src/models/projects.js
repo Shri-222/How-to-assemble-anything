@@ -1,7 +1,7 @@
 
 import mongoose from "mongoose";
 
-const projectSchemas = mongoose.Schema({
+const projectSchemas = new mongoose.Schema({
 
     title : {
         type : String,
