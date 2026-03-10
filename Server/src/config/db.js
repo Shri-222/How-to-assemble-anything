@@ -1,14 +1,12 @@
 
 import mongoose from "mongoose";
-import 'dotenv/config'
 
 export default async function DBConnect() {
     
     try {
         
-        await mongoose.connect(process.env.MONGO_URL);
-
-        console.log('Connected Successfully ')
+        const conn = await mongoose.connect(process.env.MONGO_URL);
+        console.log(`MongoDB Connected: ${conn.connection.host}`);
 
     } catch (error) {
         

@@ -5,19 +5,19 @@ const partsSchemas = new mongoose.Schema({
 
     name : {
         type : String,
-        
+        required : true,
     },
 
     material : {    // like plastic, metal, etc.
         type : String,
-
+        required : true,
     },
 
-    commonSources : {   //e.g., "Found in old appliances"
+    commonSources : [{   //e.g., "Found in old appliances"
         type : String,
-
-    }
-})
+        
+    }]
+}, { timestamps : true } );
 
 const Parts = mongoose.model('Part', partsSchemas);
 

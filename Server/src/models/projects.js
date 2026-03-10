@@ -5,24 +5,35 @@ const projectSchemas = new mongoose.Schema({
 
     title : {
         type : String,
-
+        required : true,
     },
 
-    steps : {
+    steps : [{
         type : String,
-        
-    },
+        required : true  
+    }],
 
     difficulty : {
-        type : String,
+        type: String,
+        enum: ['Easy', 'Medium', 'Hard'],
+        required: true
     },
 
-    requiredParts : {
-        type : String,
-         
-    }
+    requiredParts : [{
+        partId : {
+            type : mongoose.Schema.ObjectId,
+            ref : 'Part',
+            required : true
+        },
 
-})
+        quantity : {
+            type : Number,
+            default : 1, 
+        }
+         
+    }]
+
+}, { timestamps : true });
 
 const Projects = mongoose.model('Project', projectSchemas);
 

@@ -2,13 +2,9 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-    userId : {
+    firebaseUid : {
         type : String,
-        unique : true,
-    },
-
-    userName : {
-        type : String,
+        required  :true,
         unique : true,
     },
 
@@ -18,19 +14,9 @@ const userSchema = new mongoose.Schema({
 
     },
 
-    password : {
-        type : String,
-        required : true,
-    },
-
-    refresh_token : {
-        type : String,
-        unique : true,
-        expires : '1y', // Refresh token will expire after 1 year
-    },
-
     inventory : {
-        type : mongoose.Schema.ObjectId('Part')
+        type : mongoose.Schema.ObjectId,
+        ref : 'Part',
 
     },
 
