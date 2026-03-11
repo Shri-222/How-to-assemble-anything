@@ -1,11 +1,10 @@
 
-import User from '../models/User.js';
-import Project from '../models/Project.js';
+import User from '../models/user.js';
+import Project from '../models/projects.js';
 import { calculateProjectMatches } from '../utils/matchingAlgo.js';
 
-/**
- * Gets projects based on existing inventory (No camera needed)
- */
+ // Gets projects based on existing inventory (No camera needed)
+ 
 export const getMyBuilds = async (req, res, next) => {
   try {
     // 1. Get the user and their saved parts

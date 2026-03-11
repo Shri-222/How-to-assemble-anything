@@ -1,10 +1,10 @@
 import sharp from 'sharp'; 
 import { analyzeScrapImage } from '../services/geminiService.js';
 import { calculateProjectMatches } from '../utils/matchingAlgo.js';
-import { uploadToCloudinary } from '../utils/ImageUploadCloudinary.js'; // ADD THIS LINE
-import Part from '../models/Part.js';
-import User from '../models/User.js';
-import Project from '../models/Project.js';
+import { uploadToCloudinary } from '../utils/ImageUploadCloudinary.js'; 
+import Part from '../models/parts.js';
+import User from '../models/user.js';
+import Project from '../models/projects.js';
 
 export const scanImage = async (req, res, next) => {
   try {

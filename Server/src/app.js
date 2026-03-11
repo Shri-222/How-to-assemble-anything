@@ -19,11 +19,11 @@ app.get('/api', (req, res) => {
   });
 });
 
+app.use('/api/vision', visionRoutes);
+app.use('/api/projects', projectRoutes);
+
 // --- Error Handling ---
 app.use(notFound);      // Catches 404s
 app.use(errorHandler);  // Catches all thrown errors
-
-app.use('/api/vision', visionRoutes);
-app.use('/api/projects', projectRoutes);
 
 export default app;
