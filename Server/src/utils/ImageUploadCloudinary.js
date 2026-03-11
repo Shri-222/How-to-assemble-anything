@@ -1,25 +1,14 @@
+import { v2 as cloudinary } from 'cloudinary';
 
-import cloudinary from 'cloudinary';
-
-export default async function UploadImageToCloudinary( { file, folder, height, quality } ) {
-    
-    try {
-        
-        const options = { folder };
-
-        if ( height || quality ) { 
-            options.transformation = [];
-
-            if ( height ) options.transformation.push({ height, crop : 'scale' });
-
-            if ( quality ) options.transformation.push({ quality });
-        }
-
-        const upload = await cloudinary.uploader.upload(file.tempfilePath, options);
-
-        return upload;
-
-    } catch (error) {
-        console.error('Error while Uploading the Documents to Cloudinary ', error)
-    }
-}
+export const uploadToCloudinary = async (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: 'assemble-it-scraps' },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result.secure_url);
+      }
+    );
+    uploadStream.end(fileBuffer);
+  });
+};

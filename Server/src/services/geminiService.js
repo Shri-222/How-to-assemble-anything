@@ -1,37 +1,54 @@
-
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-/**
- * Analyzes an image buffer using Gemini 1.5 Flash to identify scrap parts.
- * @param {Buffer} imageBuffer - The image data from the request.
- * @returns {Object} - Parsed JSON object containing the identified parts.
- */
+// Define the schema 
+const responseSchema = {
+  type: SchemaType.OBJECT,
+  properties: {
+    parts: {
+      type: SchemaType.ARRAY,
+      items: {
+        type: SchemaType.OBJECT,
+        properties: {
+          name: { type: SchemaType.STRING, description: "Name of the hardware part" },
+          material: { type: SchemaType.STRING, description: "Likely material like metal, plastic, wood" },
+          confidence: { type: SchemaType.NUMBER, description: "Confidence score 0 to 1" }
+        },
+        required: ["name", "material"]
+      }
+    }
+  }
+};
+
 export const analyzeScrapImage = async (imageBuffer) => {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+    // Using gemini-3-flash-preview for the best speed/intelligence balance
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-3-flash-preview",
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: responseSchema,
+      }
+    });
 
-    const prompt = "Analyze this image and return a JSON list of hardware/scrap parts identified. Format: { parts: [{ name, material, confidence }] }";
+    const prompt = "Identify all reusable hardware, scrap parts, or assembly components in this image.";
 
     const imagePart = {
       inlineData: {
         data: imageBuffer.toString("base64"),
-        mimeType: "image/jpeg", // Standardizing for general scrap images
+        mimeType: "image/jpeg",
       },
     };
 
     const result = await model.generateContent([prompt, imagePart]);
-    const response = await result.response;
-    const text = response.text();
-
-    // Cleaning the response in case the AI wraps it in markdown code blocks
-    const cleanedJson = text.replace(/```json|```/g, "").trim();
     
-    return JSON.parse(cleanedJson);
+    // With Structured Output, result.response.text() is guaranteed to be valid JSON
+    return JSON.parse(result.response.text());
     
   } catch (error) {
     console.error("Gemini Analysis Error:", error.message);
-    throw new Error("Failed to analyze image with Gemini AI.");
+    // Fallback: If AI fails, return an empty array so the app doesn't crash
+    return { parts: [] };
   }
 };

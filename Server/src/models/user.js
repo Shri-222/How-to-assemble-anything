@@ -17,7 +17,6 @@ const userSchema = new mongoose.Schema({
     inventory : {
         type : mongoose.Schema.ObjectId,
         ref : 'Part',
-
     },
 
 });

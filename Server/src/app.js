@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
+import visionRoutes from './routes/visionRoutes.js';
+import projectRoutes from './routes/projectRoutes.js';
 
 const app = express();
 
@@ -17,12 +19,11 @@ app.get('/api', (req, res) => {
   });
 });
 
-// Import and use modular routes here
-// import partRoutes from './routes/partRoutes.js';
-// app.use('/api/parts', partRoutes);
-
 // --- Error Handling ---
 app.use(notFound);      // Catches 404s
 app.use(errorHandler);  // Catches all thrown errors
+
+app.use('/api/vision', visionRoutes);
+app.use('/api/projects', projectRoutes);
 
 export default app;
