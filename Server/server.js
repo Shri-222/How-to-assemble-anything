@@ -14,8 +14,8 @@ const startServer = async () => {
 
     const PORT = process.env.PORT;
 
-    app.listen(PORT, () => {
-      console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server is listening for the emulator on port ${PORT} ${PORT}`);
     });
   } catch (error) {
     console.error(`Failed to start server: ${error.message}`);

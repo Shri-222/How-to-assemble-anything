@@ -1,4 +1,4 @@
-import admin from 'firebase-admin';
+import admin from '../config/firebase.js';
 
     // Middleware to verify Firebase ID tokens.
     // Decodes the token and attaches the UID to req.user.
@@ -13,6 +13,8 @@ export const protect = async (req, res, next) => {
 
       // Verify token with Firebase Admin SDK
       const decodedToken = await admin.auth().verifyIdToken(token);
+
+      console.log("decode token  -", decodedToken);
 
       // Attach the UID to the request object
       req.user = {

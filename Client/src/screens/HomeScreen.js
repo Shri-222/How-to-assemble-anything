@@ -10,9 +10,32 @@ import {
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { scanScrapImage } from '../api/apiService';
 import auth from '@react-native-firebase/auth';
+import { PermissionsAndroid, Platform } from 'react-native'
 
 const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
+
+  const requestCameraPermission = async () => {
+    if (Platform.OS === 'android') {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+              title: "Camera Permission",
+              message: "Assemble-It needs access to your camera to scan scrap.",
+              buttonNeutral: "Ask Me Later",
+              buttonNegative: "Cancel",
+              buttonPositive: "OK"
+            }
+          );
+          return granted === PermissionsAndroid.RESULTS.GRANTED;
+        } catch (err) {
+          console.warn(err);
+          return false;
+        }
+      }
+      return true;
+    };
 
   const handlePickImage = type => {
     const options = {
@@ -23,6 +46,14 @@ const HomeScreen = ({ navigation }) => {
     const method = type === 'camera' ? launchCamera : launchImageLibrary;
 
     method(options, async response => {
+        if (type === 'camera') {
+          const hasPermission = await requestCameraPermission();
+            if (!hasPermission) {
+              Alert.alert("Permission Denied", "Camera access is required to scan scrap.");
+              return;
+            }
+        }
+
       if (response.didCancel) return;
       if (response.errorCode)
         return Alert.alert('Error', response.errorMessage);
@@ -33,7 +64,7 @@ const HomeScreen = ({ navigation }) => {
       try {
         const result = await scanScrapImage(asset);
         // Navigate to Results screen with the data from backend
-        navigation.navigate('Results', { data: result });
+        // navigation.navigate('Results', { data: result });
       } catch (error) {
         Alert.alert('Scan Failed', error.message || 'Something went wrong');
       } finally {
@@ -41,6 +72,7 @@ const HomeScreen = ({ navigation }) => {
       }
     });
   };
+
 
   const handleLogout = () => auth().signOut();
 
@@ -57,7 +89,7 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.center}>
           <ActivityIndicator size="large" color="#000" />
           <Text style={styles.loadingText}>
-            Analyzing scrap with Gemini AI...
+            Analyzing scrap...
           </Text>
         </View>
       ) : (

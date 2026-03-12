@@ -1,7 +1,7 @@
 import axios from 'axios';
 import auth from '@react-native-firebase/auth';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://10.0.2.2:5000/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -34,8 +34,10 @@ api.interceptors.request.use(
 export const scanScrapImage = async image => {
   const formData = new FormData();
 
+  const uri = Platform.OS === 'android' ? image.uri : image.uri.replace('file://', '');
+
   formData.append('image', {
-    uri: image.uri,
+    uri: uri,
     type: image.type || 'image/jpeg',
     name: image.fileName || 'upload.jpg',
   });

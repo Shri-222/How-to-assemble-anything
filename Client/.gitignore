@@ -37,6 +37,8 @@ local.properties
 
 .env
 
+google-services.json
+
 # node.js
 #
 node_modules/
