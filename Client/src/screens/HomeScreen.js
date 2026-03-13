@@ -64,7 +64,7 @@ const HomeScreen = ({ navigation }) => {
       try {
         const result = await scanScrapImage(asset);
         // Navigate to Results screen with the data from backend
-        // navigation.navigate('Results', { data: result });
+        navigation.navigate('Results', { data: result });
       } catch (error) {
         Alert.alert('Scan Failed', error.message || 'Something went wrong');
       } finally {

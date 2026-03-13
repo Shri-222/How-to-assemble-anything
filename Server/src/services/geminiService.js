@@ -11,14 +11,33 @@ const responseSchema = {
       items: {
         type: SchemaType.OBJECT,
         properties: {
-          name: { type: SchemaType.STRING, description: "Name of the hardware part" },
-          material: { type: SchemaType.STRING, description: "Likely material like metal, plastic, wood" },
-          confidence: { type: SchemaType.NUMBER, description: "Confidence score 0 to 1" }
+          name: { type: SchemaType.STRING },
+          material: { type: SchemaType.STRING },
+          confidence: { type: SchemaType.NUMBER }
         },
-        required: ["name", "material"]
+        required: ["name", "material", "confidence"]
+      }
+    },
+    projects: {
+      type: SchemaType.ARRAY,
+      items: {
+        type: SchemaType.OBJECT,
+        properties: {
+          title: { type: SchemaType.STRING },
+          description: { type: SchemaType.STRING },
+          difficulty: { type: SchemaType.STRING },
+          // ✅ ADD THIS: List of items the user still needs
+          missingParts: { 
+            type: SchemaType.ARRAY, 
+            items: { type: SchemaType.STRING },
+            description: "Common items required to finish this project that are NOT in the image"
+          }
+        },
+        required: ["title", "description", "missingParts"]
       }
     }
-  }
+  },
+  required: ["parts", "projects"]
 };
 
 export const analyzeScrapImage = async (imageBuffer) => {
@@ -32,8 +51,17 @@ export const analyzeScrapImage = async (imageBuffer) => {
       }
     });
 
-    const prompt = "Identify all reusable hardware, scrap parts, or assembly components in this image.";
-
+    const prompt = `
+      You are a survivalist engineering expert. 
+      Analyze these scavenged hardware parts and suggest 2-3 functional, high-utility survival assemblies.
+      
+      Rules:
+      1. The scanned parts must be the PRIMARY components of the project.
+      2. For each project, identify common scavengable items (like duct tape, wire, or wood) that are MISSING from the image but necessary to complete the build.
+      3. Focus on: Defense/Security, Resource Collection (Water/Fire), or Survival Gear.
+      4. Strictly NO home decor.
+    `;
+    
     const imagePart = {
       inlineData: {
         data: imageBuffer.toString("base64"),
@@ -42,9 +70,16 @@ export const analyzeScrapImage = async (imageBuffer) => {
     };
 
     const result = await model.generateContent([prompt, imagePart]);
+
+    
     
     // With Structured Output, result.response.text() is guaranteed to be valid JSON
-    return JSON.parse(result.response.text());
+    const responseBody = result.response.text(); 
+    const parsedData = JSON.parse(responseBody);
+
+    console.log("Result from gemini - ", parsedData);
+
+    return parsedData;
     
   } catch (error) {
     console.error("Gemini Analysis Error:", error.message);
