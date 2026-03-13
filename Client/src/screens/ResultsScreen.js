@@ -12,7 +12,19 @@ const ResultsScreen = ({ route, navigation }) => {
   const identifiedParts = results.identifiedParts || []; 
   const topMatches = results.projects || [];
 
-  console.log("Result - ", results);
+  console.log("Result - ", identifiedParts, topMatches);
+
+  const SafetyDisclaimer = () => (
+    <View style={styles.disclaimerBox}>
+      <Text style={styles.disclaimerTitle}>⚠️ SURVIVALIST ADVISORY</Text>
+      <Text style={styles.disclaimerText}>
+        The assemblies generated are for educational purposes only. 
+        AI identification can misinterpret materials. Always verify structural 
+        integrity and chemical safety manually. Assemble-It is not liable for 
+        injuries resulting from improvised builds.
+      </Text>
+    </View>
+  );
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -23,7 +35,7 @@ const ResultsScreen = ({ route, navigation }) => {
       {identifiedParts?.map((part, index) => (
         <View key={index} style={styles.card}>
           <View style={styles.row}>
-            <Text style={styles.partName}>📦 {part.name}</Text>
+            <Text style={styles.partName}>{part.name}</Text>
             <Text style={styles.confidenceBadge}>
               {Math.round(part.confidence * 100)}%
             </Text>
@@ -36,7 +48,7 @@ const ResultsScreen = ({ route, navigation }) => {
       <Text style={styles.sectionHeader}>Survival Assemblies:</Text>
       {topMatches?.map((project, index) => (
         <View key={index} style={[styles.card, styles.projectCard]}>
-          <Text style={styles.projectName}>🛠️ {project.title}</Text>
+          <Text style={styles.projectName}>{project.title}</Text>
           <Text style={styles.difficultyTag}>{project.difficulty}</Text>
           <Text style={styles.projectDetails}>{project.description}</Text>
 
@@ -62,6 +74,8 @@ const ResultsScreen = ({ route, navigation }) => {
       >
         <Text style={styles.backButtonText}>Scan Again</Text>
       </TouchableOpacity>
+
+      <SafetyDisclaimer style={styles.SafetyDisclaimer}/>
     </ScrollView>
   );
 };
@@ -97,6 +111,26 @@ const styles = StyleSheet.create({
 
   backButton: { backgroundColor: '#000', padding: 18, borderRadius: 12, marginVertical: 30, alignItems: 'center' },
   backButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  disclaimerBox: {
+    backgroundColor: '#FFF5F5', 
+    padding: 15,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FEB2B2',
+    marginTop: 10,
+    marginBottom: 50,
+  },
+  disclaimerTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#C53030',
+    marginBottom: 5,
+  },
+  disclaimerText: {
+    fontSize: 11,
+    color: '#742A2A',
+    lineHeight: 16,
+  },
 });
 
 export default ResultsScreen;

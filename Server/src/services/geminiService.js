@@ -11,11 +11,11 @@ const responseSchema = {
       items: {
         type: SchemaType.OBJECT,
         properties: {
-          name: { type: SchemaType.STRING },
-          material: { type: SchemaType.STRING },
-          confidence: { type: SchemaType.NUMBER }
+          name: { type: SchemaType.STRING, description: "Technical name of the component" },
+          material: { type: SchemaType.STRING, description: "Observed material (e.g., Brushed Stainless, Tempered Glass)" },
+          confidence: { type: SchemaType.NUMBER, description: "Float between 0 and 1" }
         },
-        required: ["name", "material", "confidence"]
+        required: ["name", "material", "confidence"] // Force the AI to provide confidence
       }
     },
     projects: {
@@ -25,15 +25,13 @@ const responseSchema = {
         properties: {
           title: { type: SchemaType.STRING },
           description: { type: SchemaType.STRING },
-          difficulty: { type: SchemaType.STRING },
-          // ✅ ADD THIS: List of items the user still needs
+          difficulty: { type: SchemaType.STRING, enum: ["Low-Resource", "Moderate-Build", "Complex-Engineering"] },
           missingParts: { 
             type: SchemaType.ARRAY, 
-            items: { type: SchemaType.STRING },
-            description: "Common items required to finish this project that are NOT in the image"
+            items: { type: SchemaType.STRING } 
           }
         },
-        required: ["title", "description", "missingParts"]
+        required: ["title", "description", "difficulty", "missingParts"]
       }
     }
   },
@@ -52,14 +50,21 @@ export const analyzeScrapImage = async (imageBuffer) => {
     });
 
     const prompt = `
-      You are a survivalist engineering expert. 
-      Analyze these scavenged hardware parts and suggest 2-3 functional, high-utility survival assemblies.
+      SYSTEM ROLE: Lead Survival Engineer & Scavenging Analyst.
       
-      Rules:
-      1. The scanned parts must be the PRIMARY components of the project.
-      2. For each project, identify common scavengable items (like duct tape, wire, or wood) that are MISSING from the image but necessary to complete the build.
-      3. Focus on: Defense/Security, Resource Collection (Water/Fire), or Survival Gear.
-      4. Strictly NO home decor.
+      TASK: 
+      1. Identify all hardware components in the provided image with high precision.
+      2. For every identified part, assign a 'confidence' score between 0.1 and 1.0 based on visual clarity.
+      3. Analyze the physical properties (tensile strength, heat resistance, conductivity) of the identified scrap.
+      4. Generate 2-3 "Field-Ready" tactical or survival assemblies.
+      
+      PROJECT CRITERIA:
+      - Must be high-utility (Defense, Water Purification, Energy, or Signaling).
+      - Must utilize the scanned parts as the "Critical Path" components.
+      - Must include a 'missingParts' inventory for required common scavenging items.
+      - STRICT BANS: No artistic decor, no furniture, no non-functional aesthetics.
+      
+      TONE: Professional, technical, and urgent. Use engineering terminology.
     `;
     
     const imagePart = {
@@ -70,14 +75,10 @@ export const analyzeScrapImage = async (imageBuffer) => {
     };
 
     const result = await model.generateContent([prompt, imagePart]);
-
-    
-    
-    // With Structured Output, result.response.text() is guaranteed to be valid JSON
     const responseBody = result.response.text(); 
     const parsedData = JSON.parse(responseBody);
 
-    console.log("Result from gemini - ", parsedData);
+    console.log("response body from gemini - ", parsedData);
 
     return parsedData;
     

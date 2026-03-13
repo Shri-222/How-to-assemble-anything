@@ -13,6 +13,10 @@ const partsSchemas = new mongoose.Schema({
         required : true,
     },
 
+    confidence : {
+        type : Number
+    },
+
     commonSources : [{   //e.g., "Found in old appliances"
         type : String,
         

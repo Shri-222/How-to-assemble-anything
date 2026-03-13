@@ -17,7 +17,6 @@ export const AuthProvider = ({ children }) => {
             uid: userState.uid,
             email: userState.email,
           });
-          console.log('User synced with MongoDB');
         } catch (error) {
           console.error('User sync failed:', error.response?.data || error.message);
         }

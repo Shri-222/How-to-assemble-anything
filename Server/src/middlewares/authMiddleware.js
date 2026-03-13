@@ -14,8 +14,6 @@ export const protect = async (req, res, next) => {
       // Verify token with Firebase Admin SDK
       const decodedToken = await admin.auth().verifyIdToken(token);
 
-      console.log("decode token  -", decodedToken);
-
       // Attach the UID to the request object
       req.user = {
         uid: decodedToken.uid,

@@ -23,17 +23,25 @@ export const scanImage = async (req, res, next) => {
 
     // 2. Identify parts using Gemini AI
     const result = await analyzeScrapImage(optimizedImageBuffer);
-    const identifiedParts = result.parts || [];
+    const identifiedParts = Array.isArray(result?.parts) ? result.parts : [];
 
     // 3. Find or Create parts
     const newPartIds = [];
     const savedPartsInfo = [];
 
     for (const p of identifiedParts) {
+
+      if (!p.name) continue;
+
       const part = await Part.findOneAndUpdate(
         { name: p.name.toLowerCase() },
         { 
-          $setOnInsert: { name: p.name, material: p.material, commonSources: [] } 
+          $setOnInsert: { 
+            name: p.name, 
+            material: p.material || 'Unknown', 
+            confidence: p.confidence || 0 , 
+            commonSources: [] 
+          } 
         },
         { upsert: true, new: true }
       );
@@ -56,7 +64,8 @@ export const scanImage = async (req, res, next) => {
       success: true,
       imageUrl, 
       identifiedParts: savedPartsInfo,
-      topMatches: topProjects.slice(0, 5) 
+      topMatches: topProjects.slice(0, 5),
+      projects : result.projects
     });
 
   } catch (error) {
