@@ -47,7 +47,7 @@ const ResultsScreen = ({ route, navigation }) => {
       {/* 2. Suggested Projects Section */}
       <Text style={styles.sectionHeader}>Survival Assemblies:</Text>
       {topMatches?.map((project, index) => (
-        <View key={index} style={[styles.card, styles.projectCard]}>
+        <TouchableOpacity key={index} style={[styles.card, styles.projectCard]}>
           <Text style={styles.projectName}>{project.title}</Text>
           <Text style={styles.difficultyTag}>{project.difficulty}</Text>
           <Text style={styles.projectDetails}>{project.description}</Text>
@@ -65,7 +65,7 @@ const ResultsScreen = ({ route, navigation }) => {
               </View>
             </View>
           )}
-        </View>
+        </TouchableOpacity>
       ))}
 
       <TouchableOpacity

@@ -1,5 +1,5 @@
 import sharp from 'sharp'; 
-import { analyzeScrapImage } from '../services/geminiService.js';
+import { analyzeScrapImage, generateProjectBlueprints } from '../services/geminiService.js';
 import { calculateProjectMatches } from '../utils/matchingAlgo.js';
 import { uploadToCloudinary } from '../utils/ImageUploadCloudinary.js'; 
 import Part from '../models/parts.js';
@@ -68,6 +68,27 @@ export const scanImage = async (req, res, next) => {
       projects : result.projects
     });
 
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const getProjectInstructions = async (req, res, next) => {
+  try {
+    const { projectTitle, scavengedParts, materialContext } = req.body;
+
+    if (!projectTitle || !scavengedParts) {
+      return res.status(400).json({ message: "Missing project context." });
+    }
+
+    // Call Gemini to generate the detailed assembly guide
+    const instructions = await generateProjectBlueprints(projectTitle, scavengedParts, materialContext);
+
+    res.status(200).json({
+      success: true,
+      instructions: instructions // This will be a structured object or Markdown
+    });
   } catch (error) {
     next(error);
   }
