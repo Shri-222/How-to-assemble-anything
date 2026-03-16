@@ -34,6 +34,10 @@ const ResultsScreen = ({ route, navigation }) => {
       <Text style={styles.sectionHeader}>Identified Components:</Text>
       {identifiedParts?.map((part, index) => (
         <View key={index} style={styles.card}>
+          <Image 
+            source={{ uri: scannedImageUri }} 
+            style={styles.thumbnail} 
+          />
           <View style={styles.row}>
             <Text style={styles.partName}>{part.name}</Text>
             <Text style={styles.confidenceBadge}>
@@ -108,6 +112,15 @@ const styles = StyleSheet.create({
   tagWrapper: { flexDirection: 'row', flexWrap: 'wrap' },
   missingTag: { backgroundColor: '#1A1A1A', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 6, marginRight: 8, marginBottom: 8, borderWidth: 1, borderColor: '#444' },
   missingTagText: { color: '#FF4444', fontSize: 11, fontWeight: '600' },
+
+  thumbnail: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+    marginRight: 15,
+    borderWidth: 1,
+    borderColor: '#333'
+  },
 
   backButton: { backgroundColor: '#000', padding: 18, borderRadius: 12, marginVertical: 30, alignItems: 'center' },
   backButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },

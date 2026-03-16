@@ -30,11 +30,11 @@ const AppNavigator = () => {
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Results" component={ResultsScreen} />
-            {/* <Stack.Screen 
+            <Stack.Screen 
               name="ProjectDetail" 
               component={ProjectDetailScreen} 
-              options={{ title: 'Assembly Blueprint' }} 
-            /> */}
+              // options={{ title: 'Assembly Blueprint' }} 
+            />
           </>
           
         ) : (
