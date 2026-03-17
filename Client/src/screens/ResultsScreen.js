@@ -1,18 +1,45 @@
-import React from 'react';
+import {useState} from 'react';
 import {
   View,
   Text,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Image,
+  Alert,
 } from 'react-native';
+
+import { projectInstructions } from '../api/apiService';
 
 const ResultsScreen = ({ route, navigation }) => {
   const results = route.params?.data || {};
   const identifiedParts = results.identifiedParts || []; 
   const topMatches = results.projects || [];
 
+  const scannedImageUri = route.params?.scannedImageUri || null;
+
+  const [loading, setLoading] = useState(false);
+  
   console.log("Result - ", identifiedParts, topMatches);
+
+  const handaleprojectInstuctions = async (selectedProject) => {
+    try {
+      setLoading(true);
+      const instructions = await projectInstructions({
+        projectTitle: selectedProject.title,
+        scavengedParts: selectedProject.missingParts,
+        materialContext: identifiedParts
+      });
+      console.log("Instructions received from backend : ", instructions);
+      navigation.navigate('Results', { data: instructions });
+      
+    } catch (error) {
+      Alert.alert('Scan Failed', error.message || 'Something went wrong');
+    }
+    finally {
+      setLoading(false);
+    }
+  }
 
   const SafetyDisclaimer = () => (
     <View style={styles.disclaimerBox}>
@@ -51,7 +78,7 @@ const ResultsScreen = ({ route, navigation }) => {
       {/* 2. Suggested Projects Section */}
       <Text style={styles.sectionHeader}>Survival Assemblies:</Text>
       {topMatches?.map((project, index) => (
-        <TouchableOpacity key={index} style={[styles.card, styles.projectCard]}>
+        <TouchableOpacity key={index} style={[styles.card, styles.projectCard]} onPress={() => handaleprojectInstuctions(project)}>
           <Text style={styles.projectName}>{project.title}</Text>
           <Text style={styles.difficultyTag}>{project.difficulty}</Text>
           <Text style={styles.projectDetails}>{project.description}</Text>
