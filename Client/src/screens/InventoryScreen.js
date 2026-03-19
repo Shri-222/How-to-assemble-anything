@@ -8,16 +8,33 @@ import {
 } from 'react-native';
 import { InventoryContext } from '../context/InventoryContext';
 
-const InventoryScreen = () => {
-  const { stockpile, removeStockpileItem, blueprints } =
-    useContext(InventoryContext);
+const InventoryScreen = ({ navigation }) => {
+  const { stockpile, removeStockpileItem, blueprints } = useContext(InventoryContext);
   const [activeTab, setActiveTab] = useState('stockpile'); // 'stockpile' or 'blueprints'
+
+  const getReadiness = (item) => {
+    if (item.difficulty) {
+      switch (item.difficulty.toLowerCase()) {
+        case 'easy':
+          return 'READY';
+        case 'medium':
+          return 'CAUTION';
+        case 'hard':
+          return 'UNTESTED';
+        default:
+          return 'UNKNOWN';
+      }
+
+    } else {
+      return 'ARCHIVED';
+    }
+  };
 
   return (
     <View style={styles.container}>
       {/* 1. Tactical Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>THE ARMORY</Text>
+        <Text style={styles.title}>THE INVENTORY</Text>
         <View style={styles.tabBar}>
           <TouchableOpacity
             onPress={() => setActiveTab('stockpile')}
@@ -58,7 +75,7 @@ const InventoryScreen = () => {
             <View>
               <Text style={styles.cardTitle}>{item.name || item.title}</Text>
               <Text style={styles.cardSub}>
-                {item.material || item.difficulty || 'Archived Guide'}
+                {item.material || getReadiness(item)}
               </Text>
             </View>
 
@@ -67,10 +84,14 @@ const InventoryScreen = () => {
                 <Text style={styles.actionText}>SCRAP</Text>
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity>
-                <Text style={[styles.actionText, { color: '#007AFF' }]}>
-                  OPEN
-                </Text>
+              <TouchableOpacity 
+                onPress={() => navigation.navigate('ProjectDetail', { 
+                  instructions: item.instructions, 
+                  projectTitle: item.title,
+                  isFromInventory: true // Flag to hide the "Archive" button since it's already saved
+                })}
+              >
+                <Text style={[styles.actionText, { color: '#007AFF' }]}> OPEN </Text>
               </TouchableOpacity>
             )}
           </View>
@@ -84,7 +105,7 @@ const InventoryScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' },
+  container: { flex: 1, backgroundColor: '#000', paddingTop: 40 },
   header: {
     padding: 20,
     backgroundColor: '#050505',
@@ -127,4 +148,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ArmoryScreen;
+export default InventoryScreen;

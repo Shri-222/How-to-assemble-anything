@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -20,12 +20,12 @@ const ResultsScreen = ({ route, navigation }) => {
 
   // const scannedImageUri = route.params?.scannedImageUri || null;
 
-  const { addToInventory } = useContext(InventoryContext);
+  const { addToStockpile } = useContext(InventoryContext);
 
   const [loading, setLoading] = useState(false);
   const [collectedItems, setCollectedItems] = useState([]);
 
-  const isAlreadyCollected = collectedItems.includes(part.name);
+  const isAlreadyCollected = (partName) => collectedItems.includes(partName);
 
   // console.log('Result - ', identifiedParts, topMatches);
 
@@ -83,18 +83,18 @@ const ResultsScreen = ({ route, navigation }) => {
                   {Math.round(part.confidence * 100)}%
                 </Text>
               </View>
+              <Text style={styles.materialText}>Material: {part.material}</Text>
               <TouchableOpacity 
-                disabled={isAlreadyCollected}
-                style={[styles.collectButton, isAlreadyCollected && { borderColor: '#444', backgroundColor: 'transparent' }]}
+                disabled={isAlreadyCollected(part.name)}
+                style={[styles.collectButton, isAlreadyCollected(part.name) && { borderColor: '#444', backgroundColor: 'transparent' }]}
                 onPress={() => {
-                  addToInventory(part);
+                  addToStockpile(part);
                   setCollectedItems(prev => [...prev, part.name]);
                   Alert.alert("Secured!", `${part.name} added to your Inventory.`);
                 }}
               >
-                <Text style={[styles.collectText, isAlreadyCollected && { color: '#444' }]}>{isAlreadyCollected ? 'SECURED' : '+ COLLECT'}</Text>
+                <Text style={[styles.collectText, isAlreadyCollected(part.name) && { color: '#444' }]}>{isAlreadyCollected(part.name) ? 'SECURED' : '+ COLLECT'}</Text>
               </TouchableOpacity>
-              <Text style={styles.materialText}>Material: {part.material}</Text>
             </View>
           ))}
 
@@ -199,6 +199,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 10,
     elevation: 5, // Shadow for Android
+    marginTop : 12
   },
   collectText: {
     color: '#007AFF',

@@ -10,6 +10,9 @@ import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
 import ResultsScreen from '../screens/ResultsScreen'
 import ProjectDetailScreen from '../screens/ProjectDetailScreen';
+import UserProfileScreen from '../screens/UserProfileScreen';
+import RequirementMatcherScreen from '../screens/RequirementMatcherScreen';
+import InventoryScreen from '../screens/InventoryScreen';
 
 const Stack = createStackNavigator();
 
@@ -31,11 +34,10 @@ const AppNavigator = () => {
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Results" component={ResultsScreen} />
-            <Stack.Screen 
-              name="ProjectDetail" 
-              component={ProjectDetailScreen} 
-              // options={{ title: 'Assembly Blueprint' }} 
-            />
+            <Stack.Screen name="ProjectDetail" component={ProjectDetailScreen} />
+            <Stack.Screen name="Profile" component={UserProfileScreen} />
+            <Stack.Screen name="RequirementMatcher" component={RequirementMatcherScreen} />
+            <Stack.Screen name='Inventory' component={InventoryScreen} />
           </>
           
         ) : (

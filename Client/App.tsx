@@ -12,9 +12,9 @@ function App(): React.JSX.Element {
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <AuthProvider>
-        <AuthProvider>
+        <InventoryProvider>
           <AppNavigator />
-        </AuthProvider>
+        </InventoryProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );

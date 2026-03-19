@@ -46,9 +46,19 @@ export const InventoryProvider = ({ children }) => {
     setBlueprints(newBlueprints);
     await AsyncStorage.setItem('@saved_blueprints', JSON.stringify(newBlueprints));
   };
+
+  const userStats = {
+    name: "Shreyash Chougale", // We can get this from an Auth/Login later
+    itemCount: stockpile.length,
+    projectCount: blueprints.length,
+    // Calculate Level: 1 level for every 5 items found
+    level: Math.floor(stockpile.length / 5) + 1, 
+    // Calculate Rank based on Level
+    rank: stockpile.length > 20 ? "Master Engineer" : stockpile.length > 10 ? "Scavenger" : "Scrap Hunter"
+  };
   
   return (
-    <InventoryContext.Provider value={{ stockpile, addToStockpile, removeStockpileItem, blueprints, saveBlueprint }}>
+    <InventoryContext.Provider value={{ stockpile, addToStockpile, removeStockpileItem, blueprints, saveBlueprint, userStats }}>
       {children}
     </InventoryContext.Provider>
   );
