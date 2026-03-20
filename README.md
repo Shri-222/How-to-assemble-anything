@@ -1,40 +1,23 @@
-🛠️ How-to-assemble-anything
+# 🛠️ Assemble-It (v2.0.0)
+**The AI-Powered Survival Engineering & Resource Management Platform.**
 
-The AI-Powered "How-to-assemble-anything" for a Self-Reliant World.
+Assemble-It is a mobile-first application designed to turn "junk" into utility. By leveraging **Gemini 1.5 Flash Vision** and **Material Engineering Logic**, it empowers users to identify scrap materials and generate instant assembly blueprints for essential survival gear.
 
-How-to-assemble-anything is a mobile-first application designed to turn "junk" into utility. By leveraging Computer Vision and Engineering Logic, it empowers users to survive and thrive by identifying available scrap materials and providing instant assembly blueprints for essential tools, power systems, and survival gear.
+## 🚀 New in v2.0.0: The Inventory Update
+We have moved beyond simple identification. v2.0.0 introduces a persistent data layer and an intelligence engine that bridges the gap between what you *find* and what you *build*.
 
-🌍 The Problem
+### 🛰️ Key Features
+* **The Inventory (Stockpile):** A local-first inventory system to track scavenged materials (Copper, HDPE Plastic, Circuitry) with zero-latency.
+* **Blueprint Archiving:** Save AI-generated technical manuals directly to your device for offline engineering in the field.
+* **The Requirement Matcher:** A logic engine that cross-references your current Stockpile against Saved Blueprints to calculate a "Build Readiness" percentage.
+* **Substitution Engine (Alpha):** Intelligent suggestions for missing hardware (e.g., "Use high-gauge wire if a bolt is unavailable").
+* **Tactical Command Center:** A dynamic User Profile that tracks your "Scavenger Level" and engineering stats based on your real-world progress.
 
-In a world of increasing instability—from global tensions to natural disasters—supply chains can fail. Most people lack the engineering knowledge to repurpose the "trash" around them into functional tools.
+## 🛠️ Tech Stack
+* **Frontend:** React Native (Mobile-First)
+* **AI:** Google Gemini (Vision & Logic)
+* **State Management:** React Context API
+* **Persistence:** AsyncStorage (Local-First Architecture)
+* **Backend:** Node.js / Express
 
-💡 The Solution
-
-A "Universal Scavenger" app that bridges the gap between Scrap and Solution.
-
-Visual Recognition: Point your camera at a pile of parts; the AI identifies the components.
-
-Reverse Engineering: Tell the app what you need (e.g., "Filtered Water"), and it maps your available parts to a buildable blueprint.
-
-Offline Resilience: A lightweight, local-first database ensures the app works even when the internet is down.
-
-🚀 Key Features (MVP)
-
-Object-ID Scanner: Real-time identification of hardware, electronics, and raw materials using on-device AI.
-
-The "Blueprint Matcher": A logic engine that calculates what percentage of a project you can build with your current inventory.
-
-Survival Library: Step-by-step assembly guides for:
-
-⚡ Energy: Solar heaters, wind turbines, battery banks.
-      
-💧 Water: Bio-filters, distillation units, pumps.
-
-📡 Comms: DIY antennas, signal boosters.
-
-Substitution Engine: "Don't have a bolt? Use this specific wire gauge instead."
-
-🛠️ Current Status: Phase 1 - Conceptualization
-We are currently mapping out the core "Assembly Logic" and defining the first 50 essential survival blueprints.
-
-"The future belongs to those who can build it from what's left behind."
+> "The future belongs to those who can build it from what's left behind."

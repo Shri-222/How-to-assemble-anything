@@ -48,6 +48,8 @@ export const scanScrapImage = async image => {
         'Content-Type': 'multipart/form-data',
       },
     });
+     
+    console.log("Api response from ScanScrapImage : ", response.data)
     return response.data;
   } catch (error) {
     console.error(
@@ -57,5 +59,26 @@ export const scanScrapImage = async image => {
     throw error;
   }
 };
+
+export const projectInstructions = async ({projectTitle, scavengedParts, materialContext}) => {
+
+  console.log("data we for Project : ", projectTitle, scavengedParts, materialContext)
+
+  try {
+
+    const response = await api.post('/vision/generate-instruction', { projectTitle, scavengedParts, materialContext });
+
+    console.log("response get from the projectInstructions : ", response.data);
+
+    return response.data;
+    
+  } catch (error) {
+    console.error(
+      'Project Instructions API Error:',
+      error.response?.data || error.message,
+    );
+    throw error;
+  }
+}
 
 export default api;

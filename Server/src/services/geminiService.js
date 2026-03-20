@@ -88,3 +88,26 @@ export const analyzeScrapImage = async (imageBuffer) => {
     return { parts: [] };
   }
 };
+
+export const generateProjectBlueprints = async (title, parts, material) => {
+  const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+
+  const prompt = `
+    SYSTEM ROLE: Lead Survival Engineer.
+    TASK: Generate a technical assembly manual for the project: "${title}".
+    
+    COMPONENTS AVAILABLE: ${parts.map(p => p.name).join(", ")}.
+    MATERIAL CONTEXT: ${material}.
+
+    GUIDELINES:
+    1. Provide a "Safety Warning" specific to this build.
+    2. List "Required Scavengables" (items like wire, tape, or glue not in the scan).
+    3. Provide a 5-8 step "Assembly Process" using professional engineering verbs (e.g., "fasten," "calibrate," "insulate").
+    4. Estimate "Operational Integrity" (Low/Medium/High).
+    
+    FORMAT: Return the response in clean Markdown.
+  `;
+
+  const result = await model.generateContent(prompt);
+  return result.response.text();
+};

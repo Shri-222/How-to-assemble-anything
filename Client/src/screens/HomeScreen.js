@@ -59,12 +59,13 @@ const HomeScreen = ({ navigation }) => {
         return Alert.alert('Error', response.errorMessage);
 
       const asset = response.assets[0];
+      const imageUri = `${asset.uri}`;
       setLoading(true);
 
       try {
         const result = await scanScrapImage(asset);
         // Navigate to Results screen with the data from backend
-        navigation.navigate('Results', { data: result });
+        navigation.navigate('Results', { data: result, scannedImageUri: imageUri });
       } catch (error) {
         Alert.alert('Scan Failed', error.message || 'Something went wrong');
       } finally {
@@ -73,15 +74,17 @@ const HomeScreen = ({ navigation }) => {
     });
   };
 
-
-  const handleLogout = () => auth().signOut();
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>How To Assemble Anything</Text>
-        <TouchableOpacity onPress={handleLogout}>
-          <Text style={styles.logout}>Logout</Text>
+        <TouchableOpacity 
+          style={styles.profileButton}
+          onPress={() => navigation.navigate('Profile')}
+        >
+          <View style={styles.avatarMini}>
+            <Text style={styles.avatarInitial}>S</Text>
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -118,10 +121,25 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 40,
   },
   title: { fontSize: 22, fontWeight: 'bold', color: '#000' },
-  logout: { color: '#ff4444', fontWeight: '500' },
+  
+  profileButton: {
+    padding: 5,
+  },
+  avatarMini: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#007AFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  avatarInitial: { color: '#FFF', fontWeight: 'bold', fontSize: 14 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { marginTop: 15, color: '#666' },
   buttonContainer: { flex: 1, justifyContent: 'center' },
