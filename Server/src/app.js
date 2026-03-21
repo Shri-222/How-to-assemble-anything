@@ -4,6 +4,7 @@ import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 import visionRoutes from './routes/visionRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import syncRoutes from './routes/sync.routes.js'
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.get('/api', (req, res) => {
 app.use('/api/vision', visionRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/data', syncRoutes);
 
 // --- Error Handling ---
 app.use(notFound);      // Catches 404s

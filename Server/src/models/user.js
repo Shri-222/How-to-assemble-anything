@@ -14,10 +14,20 @@ const userSchema = new mongoose.Schema({
 
     },
 
-    inventory : [{
+    parts : [{
         type : mongoose.Schema.ObjectId,
         ref : 'Part',
     }],
+
+    inventory : [{
+        type : mongoose.Schema.ObjectId,
+        ref : 'Inventory',
+    }],
+
+    blueprint : [{
+        type : mongoose.Schema.ObjectId,
+        ref : 'Blueprint',
+    }]
 
 });
 

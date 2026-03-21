@@ -52,13 +52,13 @@ export const scanImage = async (req, res, next) => {
     // 4. Update User Inventory
     const user = await User.findOneAndUpdate(
       { firebaseUid: req.user.uid },
-      { $addToSet: { inventory: { $each: newPartIds } } }, 
+      { $addToSet: { parts: { $each: newPartIds } } }, 
       { new: true }
-    ).populate('inventory');
+    ).populate('parts');
 
     // 5. Fetch all projects and run Matching Algorithm
     const allProjects = await Project.find({}).populate('requiredParts.partId');
-    const topProjects = calculateProjectMatches(user.inventory, allProjects);
+    const topProjects = calculateProjectMatches(user.parts, allProjects);
 
     res.status(201).json({
       success: true,

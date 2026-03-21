@@ -30,6 +30,7 @@ const InventoryScreen = ({ navigation }) => {
     }
   };
 
+
   return (
     <View style={styles.container}>
       {/* 1. Tactical Header */}

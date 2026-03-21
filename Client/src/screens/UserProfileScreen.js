@@ -1,23 +1,37 @@
 import { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { InventoryContext } from '../context/InventoryContext';
+import { AuthContext } from '../context/AuthContext';
+import { useSync } from '../hook/useSync';
+import auth from '@react-native-firebase/auth';
 
 const UserProfileScreen = ({ navigation }) => {
-  const { stockpile, blueprints, userStats } = useContext(InventoryContext);
-
-  // Get initials dynamically (e.g., "Shri Chougale" -> "SC")
-  const initials = userStats.name.split(' ').map(n => n[0]).join('');
+  const { stockpile, blueprints } = useContext(InventoryContext);
+  const { user } = useContext(AuthContext);
+  
+  const { triggerSync, isSyncing, lastSync } = useSync( user?.uid ); 
 
    const handleLogout = () => auth().signOut();
+
+   const userStats = {
+      name: user?.displayName || user?.email.split('@')[0] || "User", // We can get this from an Auth/Login later
+      itemCount: stockpile.length,
+      projectCount: blueprints.length,
+      // Calculate Level: 1 level for every 5 items found
+      level: Math.floor(stockpile.length / 5) + 1, 
+      // Calculate Rank based on Level
+      rank: stockpile.length > 20 ? "Master Engineer" : stockpile.length > 10 ? "Scavenger" : "Scrap Hunter"
+    };
+
   return (
     <ScrollView style={styles.container}>
       {/* 1. Tactical ID Card */}
       <View style={styles.profileHeader}>
         <View style={styles.avatarPlaceholder}>
-          <Text style={styles.avatarText}>{initials}</Text> 
+          <Text style={styles.avatarText}>{userStats.name.split(' ').map(n => n[0]).join('')}</Text> 
         </View>
         <View>
-          <Text style={styles.userName}>{userStats.name}</Text>
+          <Text style={styles.userName}>{userStats.name }</Text>
           <Text style={styles.userRank}>{userStats.rank} | Lvl {userStats.level}</Text>
         </View>
         <TouchableOpacity onPress={handleLogout}>
@@ -57,6 +71,17 @@ const UserProfileScreen = ({ navigation }) => {
         </View>
       </TouchableOpacity>
 
+      <TouchableOpacity 
+        onPress={triggerSync} 
+        style={[styles.matcherButton, isSyncing && styles.syncButtonDisabled]}
+        disabled={isSyncing}
+      >
+        <Text style={styles.matcherTitle}>
+          {isSyncing ? "UPLOADING TO CLOUD..." : "SYNC ARMORY"}
+        </Text>
+      </TouchableOpacity>
+      {lastSync && <Text style={styles.syncTime}>Last Secured: {lastSync}</Text>}
+
       {/* 4. Settings/Account Options */}
       {/* <View style={styles.menuList}>
         <TouchableOpacity style={styles.menuItem}>
@@ -85,6 +110,38 @@ const styles = StyleSheet.create({
   matcherButton: { margin: 20, padding: 20, backgroundColor: '#111', borderRadius: 12, borderWidth: 1, borderColor: '#007AFF', borderStyle: 'dashed' },
   matcherTitle: { color: '#007AFF', fontWeight: 'bold', fontSize: 16, marginBottom: 5 },
   matcherSub: { color: '#888', fontSize: 12 },
+  syncButton: {
+    backgroundColor: '#007AFF', // Tactical Blue
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#005BB7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+    // Add opacity or grey out when syncing
+    opacity: 1, 
+  },
+  syncButtonDisabled: {
+    backgroundColor: '#1A1A1A',
+    borderColor: '#333',
+  },
+  text: {
+    color: '#FFF',
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
+  },
+  syncTime: {
+    color: '#888',
+    fontSize: 10,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginTop: 4,
+    letterSpacing: 0.5,
+  },
   menuList: { paddingHorizontal: 20 },
   menuItem: { paddingVertical: 18, borderBottomWidth: 1, borderBottomColor: '#111' },
   menuText: { color: '#AAA', fontSize: 14 }
