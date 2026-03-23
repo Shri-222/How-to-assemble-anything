@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const InventorySchema = new mongoose.Schema({
+  userId: { type: String, required: true },
   itemId: { type: String, required: true }, // The ID from mobile app
   name: { type: String, required: true },
   material: { type: String },

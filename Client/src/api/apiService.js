@@ -97,19 +97,18 @@ export const syncData = async (userId) => {
       const stockpile = rawStockpile ? JSON.parse(rawStockpile) : [];
       const blueprints = rawBlueprints ? JSON.parse(rawBlueprints) : [];
 
-      // console.log("data we have into syncData api call : ", stockpile, blueprints, userId)
+      console.log("data we have into syncData api call : ", userId)
 
       const response = await api.post('/data/sync', {
-        userId,
+        userId : userId,
         stockpile,
         blueprints
       });
 
-      console.log('result we got from the syncData api call : ', response)
+      console.log('Result received from Axios:', response.data);
+      const result = response.data;
 
-      const result = await response.json();
-
-      if (response.ok) {
+      if (response.status === 200) { 
         // 3. Mark last sync time locally
         await AsyncStorage.setItem('last_sync_timestamp', new Date().toISOString());
         return { success: true, data: result };

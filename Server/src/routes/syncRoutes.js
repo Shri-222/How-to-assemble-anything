@@ -1,5 +1,5 @@
 import express from 'express';
-import { syncInventory } from '../controllers/sync.controller.js';
+import { syncInventory } from '../controllers/syncController.js';
 
 const router = express.Router();
 

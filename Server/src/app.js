@@ -4,7 +4,7 @@ import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 import visionRoutes from './routes/visionRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import userRoutes from './routes/userRoutes.js';
-import syncRoutes from './routes/sync.routes.js'
+import syncRoutes from './routes/syncRoutes.js';
 
 const app = express();
 
