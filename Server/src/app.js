@@ -26,6 +26,9 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/data', syncRoutes);
 
+
+app.use('/static', express.static(path.join(__dirname, 'public')));
+
 // --- Error Handling ---
 app.use(notFound);      // Catches 404s
 app.use(errorHandler);  // Catches all thrown errors

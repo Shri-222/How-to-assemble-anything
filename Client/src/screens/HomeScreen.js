@@ -9,11 +9,27 @@ import {
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { scanScrapImage } from '../api/apiService';
-import auth from '@react-native-firebase/auth';
 import { PermissionsAndroid, Platform } from 'react-native'
+
+import { syncKnowledgeBase } from './services/KnowledgeService';
 
 const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
+
+  const [syncStatus, setSyncStatus] = useState('Checking Data...');
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const initData = async () => {
+      const result = await syncKnowledgeBase((p) => setProgress(p));
+      if (result.success) {
+        setSyncStatus('System Ready');
+      } else {
+        setSyncStatus('Offline Mode: Limited Data');
+      }
+    };
+    initData();
+  }, []);
 
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
